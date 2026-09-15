@@ -10,7 +10,7 @@ A single Primary 3 English game based on Grammar LS8.5 and the world of *Prince 
 - Part 2: Pond Bridge Express.
 - Part 3: Moonlit Mountain Line.
 
-Pupils choose Wise Frog, Princess or Prince Zak. The princess has large round eyes and long lashes. Each part reveals a different railway scene, while the train and selected character visibly move towards that part's finish. Overall progress continues across all 15 questions.
+Pupils choose Wise Frog, Princess or Prince Zak. The princess has large round eyes and long lashes. Prince Zak has a short hairstyle and cute round glasses. Each part reveals a different railway scene, while the train and selected character visibly move towards that part's finish. Overall progress continues across all 15 questions. Classroom text is enlarged for projection and iPad reading.
 
 ## Marking
 
@@ -26,13 +26,13 @@ The checker separately flags:
 - missing final punctuation;
 - grammar errors outside the approved answer patterns.
 
-An opening if/when-clause requires a comma. A final if/when-clause does not. Q11 is explicitly tested against reversed, ungrammatical and incorrectly punctuated answers.
+An opening if/when-clause requires a comma. A final if/when-clause does not. Q6 requires pupils to replace the repeated noun phrase “the rubber ball” with the pronoun “it”. Q11 is explicitly tested against reversed, ungrammatical and incorrectly punctuated answers.
 
-Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. Three independent correct answers earn a life; zero lives becomes continued practice.
+Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. Three consecutive independent correct answers reveal one secret egg and earn a bonus life. Five eggs is the maximum, and the finish screen tells pupils to show the teacher for ClassDojo points. Zero lives becomes continued practice.
 
 ## Sound and results
 
-The optional looping music is generated in the browser as a short 2D arcade-style chiptune. It begins only after the pupil turns it on. No old music file is loaded.
+The looping music is generated in the browser as a short 2D arcade-style chiptune. It starts when the pupil taps **Start the Engine + Sound**, which also satisfies iPad browser sound rules. Correct and wrong answers have distinct arcade cues. Pupils can turn sound off from the header. No old music file is loaded.
 
 At the finish, pupils can show the teacher the independent score and item review, download a CSV, or print the results. Results remain on the device and are not submitted automatically.
 

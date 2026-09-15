@@ -32,6 +32,13 @@ assert.match(E.evaluate(q11,'If you complete your homework early, you may paly c
 assert.match(E.evaluate(Q[13],'You should go to bed, if you feel sleepy.').message,/Do not put a comma/i);
 assert.match(E.evaluate(Q[14],'You will punished if you continue to misbehave.').message,/“be”/i);
 
+// Q6 must combine the ideas with when and replace the repeated noun with “it”.
+const q6=Q[5];
+assert.equal(E.evaluate(q6,'When the water reaches the rubber ball, it begins to float upwards.').correct,true);
+assert.equal(E.evaluate(q6,'The rubber ball begins to float upwards when the water reaches it.').correct,true);
+assert.equal(E.evaluate(q6,'When the water reaches the rubber ball, the rubber ball begins to float upwards.').correct,false);
+assert.equal(E.evaluate(q6,'The water reaches the rubber ball when it begins to float upwards.').correct,false);
+
 // First-attempt assessment cannot be overwritten by retry or hint use.
 let state={lives:3,streak:0},record=E.createRecord(Q[0]);
 E.submit(state,Q[0],record,'You help the Wise Frog if he will show you the safest track.');
