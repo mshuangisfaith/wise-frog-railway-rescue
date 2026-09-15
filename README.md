@@ -39,3 +39,9 @@ Unit guidelines pp. 18–20: conditions and time/sequence connectors, and infere
 - Completed both full routes in the browser, including a wrong answer/retry, hints, model answer, save/reload/resume, and finish summaries.
 - Inspected 1024×768 and 768×1024 iPad-sized layouts and 390×844 narrow layout; no horizontal overflow at tested widths. Physical iPad testing remains a classroom check.
 - The in-app preview showed the export-request message without exposing a download event; verify CSV saving in Safari before relying on a class collection workflow. Screen review and printing are alternative collection methods.
+
+## Teacher review update — 15 September 2026
+
+At the finish, open **See all answers and support used**, then open any stop. The review shows the original sentence or inference and evidence choices, a correct model, the explanation, and a suggested discussion prompt. It distinguishes an independently correct first response from success after a hint. A later retry or model answer never overwrites the original response.
+
+Verification: 98 existing assessment assertions and 10 new teacher-review assertions passed. Both complete routes were checked in the browser with a wrong-evidence retry, a model-answer stop and a hint-assisted answer. Expanded review cards fit 768-pixel and 390-pixel widths without horizontal overflow.
