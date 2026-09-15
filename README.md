@@ -1,47 +1,41 @@
-# Wise Frog Railway Rescue
+# If & When Railway Rescue
 
-An HTML5 Primary 3 English game extending the established Tape Trail Word Quest classroom patterns. Original frog and princess avatars, a crafted garden railway, and two routes:
+A single Primary 3 English game based on Grammar LS8.5 and the world of *Prince Zak and the Wise Frog*.
 
-- Railway Rescue: 12 tap-to-order sentence questions using if, while and as.
-- Clue Carriages: 8 inference-and-evidence questions aligned to Prince Zak and the Wise Frog.
+## Game structure
 
-## Play
+- Questions 1–10: pupils type a complete sentence combining two ideas with the required **if** or **when**.
+- Questions 11–15: pupils type a complete sentence using the given stem and bracketed words.
+- Part 1: Palace Garden Rails.
+- Part 2: Pond Bridge Express.
+- Part 3: Moonlit Mountain Line.
 
-Open index.html on a computer, or publish this folder through GitHub Pages and open its HTTPS link in Safari on pupils' iPads. All asset paths are relative. No installation, account or build step is needed. The original PDFs are not required to run the game.
+Pupils choose Wise Frog, Princess or Prince Zak. The princess has large round eyes and long lashes. Each part reveals a different railway scene, while the train and selected character visibly move towards that part's finish. Overall progress continues across all 15 questions.
 
-Choose a character and route. Tap sentence pieces in order or select one inference and one evidence option. Tap Check, read feedback and continue. Three independent correct answers earn an extra life. At zero lives, supported practice continues. Music starts only when enabled and uses the existing Tape Trail track.
+## Marking
 
-Save & take a break stores the latest journey in that browser. On reopening, choose Continue saved journey. Only the latest journey is retained; starting another route replaces the previous saved record. Private browsing or restricted storage may prevent saving. The app reports storage failure.
+Answers must preserve the intended condition or event sequence. For Questions 1–10, the condition or earlier event always remains the first source idea, even when the clauses are rearranged. Reversals that change meaning are rejected.
 
-## Assessment
+The checker separately flags:
 
-Independent means first-attempt correct before a hint or model answer. First responses are retained when pupils retry. The reading route also reports inference and evidence counts separately. Arcade lives and elapsed time do not determine the English assessment.
+- meaning or sequence reversals;
+- missing or incorrect words;
+- likely spelling mistakes;
+- missing capital letters;
+- missing or misplaced commas;
+- missing final punctuation;
+- grammar errors outside the approved answer patterns.
 
-At the finish, pupils can show the teacher their skill breakdown and item-level support record, download a CSV of every attempt, or print the results. CSV includes original responses, correctness, independent-attempt flag and support usage. Results are local to the device; no teacher dashboard or automatic submission is included. Use your own classroom process to match a downloaded result to a pupil.
+An opening if/when-clause requires a comma. A final if/when-clause does not. Q11 is explicitly tested against reversed, ungrammatical and incorrectly punctuated answers.
 
-## Reusable files
+Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. Three independent correct answers earn a life; zero lives becomes continued practice.
 
-- questions.js: the two question packs, explanations and reader references.
-- engine.js: assessment rules and first-attempt tracking.
-- app.js: controls, SVG characters/scenery, progress, audio and local save.
-- style.css: responsive layouts, craft styling, print and reduced-motion rules.
-- trail-music.mp3: track reused from the existing Tape Trail project.
+## Sound and results
 
-Run `node tests/engine.cjs` for the assessment regression checks. This is a plain static project and does not need npm dependencies.
+The optional looping music is generated in the browser as a short 2D arcade-style chiptune. It begins only after the pupil turns it on. No old music file is loaded.
 
-## Teaching basis
+At the finish, pupils can show the teacher the independent score and item review, download a CSV, or print the results. Results remain on the device and are not submitted automatically.
 
-Unit guidelines pp. 18–20: conditions and time/sequence connectors, and inference from evidence. Reader pp. 1–9: story and companion Frog Prince activities. Railway sentences and visual artwork are original; reading clues are short paraphrases. The princess is a playable adventure avatar inspired by the companion story, not an additional character inserted into Zak's main story. For inference, also ask pupils to justify an answer orally.
+## Verification
 
-## Verification — 15 September 2026
-
-- 98 pure-logic assertions passed, covering valid clause orders, wrong conditions, immutable first attempts, hint exclusion, streak rewards, zero lives and separate inference/evidence marks.
-- Completed both full routes in the browser, including a wrong answer/retry, hints, model answer, save/reload/resume, and finish summaries.
-- Inspected 1024×768 and 768×1024 iPad-sized layouts and 390×844 narrow layout; no horizontal overflow at tested widths. Physical iPad testing remains a classroom check.
-- The in-app preview showed the export-request message without exposing a download event; verify CSV saving in Safari before relying on a class collection workflow. Screen review and printing are alternative collection methods.
-
-## Teacher review update — 15 September 2026
-
-At the finish, open **See all answers and support used**, then open any stop. The review shows the original sentence or inference and evidence choices, a correct model, the explanation, and a suggested discussion prompt. It distinguishes an independently correct first response from success after a hint. A later retry or model answer never overwrites the original response.
-
-Verification: 98 existing assessment assertions and 10 new teacher-review assertions passed. Both complete routes were checked in the browser with a wrong-evidence retry, a model-answer stop and a hint-assisted answer. Expanded review cards fit 768-pixel and 390-pixel widths without horizontal overflow.
+Run `node tests/engine.cjs`. Browser checks should cover all 15 accepted answers, wrong sequence, punctuation, spelling, hints, retries, part transitions, all three characters, sound toggle, saved progress, results, and iPad portrait and landscape layouts.

@@ -1,26 +1,43 @@
-const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
-const sandbox={window:{}};vm.createContext(sandbox);for(const f of ['questions.js','engine.js'])vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'..',f),'utf8'),sandbox);
-const E=sandbox.window.RailwayEngine,P=sandbox.window.RailwayPacks;
-assert.equal(P.connectors.length,12);assert.equal(P.inference.length,8);
-let n=0;function check(x){assert.ok(x);n++}
-for(const q of P.connectors){check(E.validOrder(q,['W','A','B']));check(E.validOrder(q,['B','W','A']));check(!E.validOrder(q,['A','B','W']));check(!E.validOrder(q,['B','A','W']));check(E.validOrder(q,['A','W','B'])===(q.word!=='if'));check(E.validOrder(q,['W','B','A'])===(q.word!=='if'));}
-let s={lives:3,streak:0};const q=P.connectors[0],r=E.createRecord(q);E.submit(s,q,r,['A','W','B']);check(s.lives===2);const first=JSON.stringify(r.attempts[0]);E.submit(s,q,r,['W','A','B']);check(JSON.stringify(r.attempts[0])===first);check(E.stats([r]).independent===0);check(s.streak===0);check(E.submit(s,q,r,['W','A','B'])===null);
-s={lives:3,streak:0};for(let i=0;i<3;i++)E.submit(s,q,E.createRecord(q),['W','A','B']);check(s.lives===4&&s.streak===0);
-const h=E.createRecord(q);E.support(s,h,'hint');E.submit(s,q,h,['W','A','B']);check(E.stats([h]).independent===0);check(s.streak===0);
-s={lives:1,streak:0};const z=E.createRecord(q);E.submit(s,q,z,['A','W','B']);E.submit(s,q,z,['A','B','W']);check(s.lives===0);E.submit(s,q,z,['W','A','B']);check(z.completed&&s.lives===0);
-for(const i of P.inference){const rr=E.createRecord(i),st={lives:3,streak:0};const result=E.submit(st,i,rr,{answer:i.answer,proof:(i.proof+1)%3});check(result.inference&&!result.evidence&&!result.correct);E.submit(st,i,rr,{answer:i.answer,proof:i.proof});check(rr.completed&&!rr.attempts[0].correct);}
-console.log(`${n} assessment assertions passed.`);
-// Teacher review must describe the original response even after retries or models.
-const iq=P.inference[0],ir=E.createRecord(iq),is={lives:3,streak:0};
-E.submit(is,iq,ir,{answer:iq.answer,proof:(iq.proof+1)%3});
-E.submit(is,iq,ir,{answer:iq.answer,proof:iq.proof});
-const before=JSON.stringify(ir),review=E.review(iq,ir);
-assert.equal(review.first.evidence,false);assert.equal(review.first.inference,true);
-assert.match(review.focus,/inference is correct/);assert.equal(JSON.stringify(ir),before);
-assert.equal(review.support,'Before any hint or model answer');
-const hr=E.createRecord(q),hs={lives:3,streak:0};E.support(hs,hr,'hint');E.submit(hs,q,hr,['W','A','B']);
-assert.equal(E.review(q,hr).support,'After support');assert.match(E.review(q,hr).focus,/without a hint/);
-const mr=E.createRecord(q);E.support(hs,mr,'model');mr.completed=true;assert.equal(E.review(q,mr).first,null);
-const wr=E.createRecord(q);E.submit(hs,q,wr,['A','W','B']);E.support(hs,wr,'model');wr.completed=true;
-assert.equal(E.review(q,wr).first.correct,false);assert.match(E.review(q,wr).focus,/condition/);
-console.log('10 teacher-review assertions passed.');
+const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const root=path.join(__dirname,'..'),sandbox={window:{}};vm.createContext(sandbox);
+for(const file of ['questions.js','engine.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox);
+const Q=sandbox.window.RailwayQuestions,E=sandbox.window.RailwayEngine;
+assert.equal(Q.length,15);assert.deepEqual([...new Set(Q.map(q=>q.part))],[1,2,3]);
+for(const q of Q){for(const answer of q.answers)assert.equal(E.evaluate(q,answer).correct,true,`${q.id}: ${answer}`);}
+
+// Meaning must remain fixed: condition/time-event A cannot become result B.
+for(const q of Q.filter(q=>q.type==='combine')){
+  const a=q.a.replace(/\.$/,''),b=q.b.replace(/\.$/,'');
+  const reversed=`${a} ${q.connector} ${b}.`;
+  const result=E.evaluate(q,reversed);
+  assert.equal(result.correct,false,`${q.id} wrongly accepted reversed meaning`);
+  assert.equal(result.kind,'meaning');
+}
+
+// Q11 and every completion item accept only approved, complete meanings.
+const q11=Q[10];
+for(const wrong of [
+  'If you complete your homework early, computer games may play you.',
+  'If computer games play you, you may complete your homework early.',
+  'If you complete your homework early you may play computer games.',
+  'if you complete your homework early, you may play computer games.',
+  'If you complete your homework early, you may play computer game.',
+  'If you complete your homework early, you may plays computer games.'
+])assert.equal(E.evaluate(q11,wrong).correct,false,`Q11 wrongly accepted: ${wrong}`);
+
+assert.equal(E.evaluate(q11,'If you complete your homework early you may play computer games.').kind,'punctuation');
+assert.match(E.evaluate(q11,'If you complete your homework early you may play computer games.').message,/comma/i);
+assert.match(E.evaluate(q11,'if you complete your homework early, you may play computer games.').message,/capital/i);
+assert.match(E.evaluate(q11,'If you complete your homework early, you may paly computer games.').message,/spelling/i);
+assert.match(E.evaluate(Q[13],'You should go to bed, if you feel sleepy.').message,/Do not put a comma/i);
+assert.match(E.evaluate(Q[14],'You will punished if you continue to misbehave.').message,/“be”/i);
+
+// First-attempt assessment cannot be overwritten by retry or hint use.
+let state={lives:3,streak:0},record=E.createRecord(Q[0]);
+E.submit(state,Q[0],record,'You help the Wise Frog if he will show you the safest track.');
+const first=JSON.stringify(record.attempts[0]);E.submit(state,Q[0],record,Q[0].answers[0]);
+assert.equal(JSON.stringify(record.attempts[0]),first);assert.equal(E.stats([record]).independent,0);
+state={lives:3,streak:0};for(let i=0;i<3;i++){const r=E.createRecord(Q[i]);E.submit(state,Q[i],r,Q[i].answers[0]);}
+assert.equal(state.lives,4);assert.equal(state.streak,0);
+record=E.createRecord(Q[1]);E.support(state,record,'hint');E.submit(state,Q[1],record,Q[1].answers[0]);assert.equal(record.attempts[0].independent,false);
+console.log('All sentence, meaning, punctuation, spelling and assessment checks passed.');
