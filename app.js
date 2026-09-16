@@ -2,20 +2,27 @@
 
 (() => {
   const Q=window.RailwayQuestions, PARTS=window.RailwayParts, E=window.RailwayEngine;
-  const app=document.querySelector('#app'), KEY='wise-frog-if-when-v4', OLD_KEY='wise-frog-if-when-v3';
+  const app=document.querySelector('#app'), KEY='wise-frog-if-when-v5', PREVIOUS_KEY='wise-frog-if-when-v4', OLD_KEY='wise-frog-if-when-v3';
   let state={screen:'start',hero:'frog',index:0,lives:3,streak:0,eggs:0,seconds:0,records:[],answer:'',feedback:null,audioOn:true};
   let saved=null,storageOK=true,tickAt=Date.now(),audioContext=null,audioTimer=null;
   const eggsFor=records=>E.eggCount(records);
   try{
     const current=localStorage.getItem(KEY);
-    if(current){const data=JSON.parse(current);if(data?.version===4&&data.state?.records?.length===15&&['part','game','finish'].includes(data.state.screen))saved=data.state;}
-    else {const data=JSON.parse(localStorage.getItem(OLD_KEY));if(data?.version===3&&data.state?.records?.length===15&&['part','game','finish'].includes(data.state.screen)){saved=data.state;saved.records=[...saved.records.slice(0,10),...Q.slice(10).map(E.createRecord)];if(saved.index>=10){saved.index=10;saved.screen='part';saved.answer='';saved.feedback=null;saved.streak=0;saved.revisedQuestions=true;}}}
-    if(saved)saved.eggs=eggsFor(saved.records);
+    if(current){const data=JSON.parse(current);if(data?.version===5&&data.state?.records?.length===15&&['part','game','finish'].includes(data.state.screen))saved=data.state;}
+    else {
+      const previous=localStorage.getItem(PREVIOUS_KEY),data=JSON.parse(previous||localStorage.getItem(OLD_KEY));
+      if(data?.state?.records?.length===15&&['part','game','finish'].includes(data.state.screen)){
+        saved=data.state;
+        if(previous&&data.version===4&&saved.index>=13){saved.records=[...saved.records.slice(0,13),...Q.slice(13).map(E.createRecord)];saved.index=13;saved.screen='game';saved.answer='';saved.feedback=null;saved.streak=0;}
+        else if(!previous&&data.version===3){saved.records=[...saved.records.slice(0,10),...Q.slice(10).map(E.createRecord)];if(saved.index>=10){saved.index=10;saved.screen='part';saved.answer='';saved.feedback=null;saved.streak=0;saved.revisedQuestions=true;}}
+      }
+    }
+    if(saved){saved.eggs=eggsFor(saved.records);state.hero=saved.hero||'frog';}
   }catch{storageOK=false;}
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const q=()=>Q[state.index],record=()=>state.records[state.index],part=()=>PARTS[q()?.part-1||0];
   const clock=()=>`${String(Math.floor(state.seconds/60)).padStart(2,'0')}:${String(state.seconds%60).padStart(2,'0')}`;
-  function save(){try{localStorage.setItem(KEY,JSON.stringify({version:4,state}));}catch{storageOK=false;}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify({version:5,state}));}catch{storageOK=false;}}
 
   function scheduleArcadeLoop(){
     if(!audioContext||!state.audioOn)return;
@@ -85,7 +92,27 @@
   function check(){const result=E.submit(state,q(),record(),state.answer);if(!result)return;const earned=eggsFor(state.records),eggFound=result.correct&&earned>state.eggs;state.eggs=earned;state.feedback={...result,title:result.correct?(eggFound?'Correct! Secret egg found!':'Correct! The train moves forward!'):(result.kind==='punctuation'?'Fix the punctuation or capital letter.':result.kind==='meaning'?'The meaning has changed.':'Check your spelling and grammar.')};playSfx(result.correct?(eggFound?'egg':'correct'):'wrong');if(result.correct)celebrate(eggFound);save();render('#feedback');}
   function exportResults(){const rows=[['Question','Skill','Attempt','Answer','Correct','Error type','Independent','Hint used','Model shown']];state.records.forEach(r=>(r.attempts.length?r.attempts:[{}]).forEach((a,i)=>rows.push([r.id,r.skill,i+1,a.answer||'',a.correct??'',a.kind||'',a.independent??'',r.hint,r.model])));const csv='\uFEFF'+rows.map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=`if-when-railway-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);document.querySelector('#export-status').textContent='Download requested. On iPad, check Safari Downloads.';}
   app.addEventListener('input',e=>{if(e.target.id==='answer'){state.answer=e.target.value;document.querySelector('[data-action="check"]').disabled=!state.answer.trim();save();}});
-  app.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.hero){state.hero=b.dataset.hero;render();document.querySelector(`[data-hero="${state.hero}"]`)?.focus();return;}switch(b.dataset.action){case'start':newGame();break;case'resume':state=saved;saved=null;if(state.audioOn)startAudio();save();render(state.screen==='game'?'#answer':'.part-intro h1');break;case'enter':state.screen='game';state.revisedQuestions=false;save();render('#answer');break;case'check':check();break;case'hint':E.support(state,record(),'hint');save();render('.hint');break;case'model':E.support(state,record(),'model');state.feedback={correct:false,title:'Study this model, then type it yourself.',message:q().explanation,model:q().answers[0]};save();render('#feedback');break;case'clear':state.answer='';state.feedback=null;save();render('#answer');break;case'next':if(!record().completed)return;if(state.index===14){state.screen='finish';stopAudio();celebrate();}else{state.index++;state.answer='';state.feedback=null;state.screen=state.index===5||state.index===10?'part':'game';}save();render(state.screen==='game'?'#answer':state.screen==='part'?'.part-intro h1':'.results h1');break;case'pause':save();saved=JSON.parse(JSON.stringify(state));state.screen='start';stopAudio();render('h1');break;case'restart':state.screen='start';state.index=0;state.answer='';state.feedback=null;state.eggs=0;saved=null;stopAudio();save();render('h1');break;case'sound':state.audioOn=!state.audioOn;state.audioOn?startAudio():stopAudio();save();render();document.querySelector('[data-action="sound"]')?.focus();break;case'teacher':document.querySelector('#teacher').showModal();break;case'close-teacher':document.querySelector('#teacher').close();break;case'export':exportResults();break;case'print':window.print();break;}});
+  app.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b||b.disabled)return;
+    if(b.dataset.hero){state.hero=b.dataset.hero;render();document.querySelector(`[data-hero="${state.hero}"]`)?.focus();return;}
+    switch(b.dataset.action){
+      case'start':newGame();break;
+      case'resume':state={...saved,hero:state.hero};saved=null;if(state.audioOn)startAudio();save();render(state.screen==='game'?'#answer':state.screen==='finish'?'.results h1':'.part-intro h1');break;
+      case'enter':state.screen='game';state.revisedQuestions=false;save();render('#answer');break;
+      case'check':check();break;
+      case'hint':E.support(state,record(),'hint');save();render('.hint');break;
+      case'model':E.support(state,record(),'model');state.feedback={correct:false,title:'Study this model, then type it yourself.',message:q().explanation,model:q().answers[0]};save();render('#feedback');break;
+      case'clear':state.answer='';state.feedback=null;save();render('#answer');break;
+      case'next':if(!record().completed)return;if(state.index===14){state.screen='finish';stopAudio();celebrate();}else{state.index++;state.answer='';state.feedback=null;state.screen=state.index===5||state.index===10?'part':'game';}save();render(state.screen==='game'?'#answer':state.screen==='part'?'.part-intro h1':'.results h1');break;
+      case'pause':save();saved=JSON.parse(JSON.stringify(state));state.screen='start';stopAudio();render('h1');break;
+      case'restart':state.screen='start';state.index=0;state.answer='';state.feedback=null;state.eggs=0;saved=null;stopAudio();save();render('h1');break;
+      case'sound':state.audioOn=!state.audioOn;state.audioOn?startAudio():stopAudio();save();render();document.querySelector('[data-action="sound"]')?.focus();break;
+      case'teacher':document.querySelector('#teacher').showModal();break;
+      case'close-teacher':document.querySelector('#teacher').close();break;
+      case'export':exportResults();break;
+      case'print':window.print();break;
+    }
+  });
   setInterval(()=>{const now=Date.now();if(state.screen==='game'&&!document.hidden&&!document.querySelector('#teacher')?.open){state.seconds+=Math.min(2,Math.round((now-tickAt)/1000));document.querySelector('#timer').textContent=clock();if(state.seconds%10===0)save();}tickAt=now;},1000);
   document.addEventListener('visibilitychange',()=>{tickAt=Date.now();if(document.hidden)stopAudio();else if(state.audioOn&&state.screen!=='finish')startAudio();});
   window.addEventListener('pagehide',()=>{if(state.screen!=='start')save();});render();

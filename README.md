@@ -10,7 +10,7 @@ A single Primary 3 English game based on Grammar LS8.5 and the world of *Prince 
 - Part 2: Pond Bridge Express.
 - Part 3: Moonlit Mountain Line.
 
-Pupils choose Wise Frog, Princess or Prince Zak. The princess has large round eyes and long lashes. Prince Zak has a short hairstyle and cute round glasses. Each part reveals a different railway scene, while the train and selected character visibly move towards that part's finish. Overall progress continues across all 15 questions. Classroom text is enlarged for projection and iPad reading.
+Pupils choose Wise Frog, Princess or Prince Zak, including when continuing a saved journey. The princess has large round eyes and long lashes. Prince Zak has a short hairstyle and cute round glasses. Each part reveals a different railway scene, while the train and selected character visibly move towards that part's finish. Overall progress continues across all 15 questions. Classroom text is enlarged for projection and iPad reading.
 
 ## Marking
 
@@ -28,7 +28,7 @@ The checker separately flags:
 
 An opening if/when-clause requires a comma. A final if/when-clause does not. Q6 requires pupils to replace the repeated noun phrase “the rubber ball” with the pronoun “it”. Q11–15 accept common grammatical alternatives such as **has to**, **should**, simple present and contractions when they preserve the prompt. Q14 asks for a command and accepts an understood subject; Q15 asks for a passive phrase. The checker remains a local pattern-based tool, so a teacher can review an unusual valid construction outside the prompted pattern.
 
-Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. One secret egg appears after 3, 6, 9, 12 and 15 correctly completed questions, even when pupils needed retries or hints. Three consecutive independent correct answers still earn a bonus life. The finish screen tells pupils to show the teacher their five eggs for ClassDojo points. Zero lives becomes continued practice. Saved journeys retain Q1–10 and their eggs; pupils who reached the old final section restart at the new Q11. The previous save remains separately stored on the device.
+Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. One secret egg appears after 3, 6, 9, 12 and 15 correctly completed questions, even when pupils needed retries or hints. Three consecutive independent correct answers still earn a bonus life. The finish screen tells pupils to show the teacher their five eggs for ClassDojo points. Zero lives becomes continued practice. Saved v4 journeys retain Q1–13 and their earned eggs; pupils who reached the previous Q14 replay Q14–15 with the revised condition, starting at Q14. Older v3 journeys retain Q1–10 and restart at Q11. The previous saves remain separately stored on the device.
 
 ## Sound and results
 

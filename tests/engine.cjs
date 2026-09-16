@@ -21,7 +21,7 @@ for(const [q,valid] of [
   [q11,['If the Wise Frog spots a crack in the track, he will warn Prince Zak.','If the Wise Frog spots a crack in the track, he has to warn Prince Zak.','If the Wise Frog spots a crack in the track, he warns Prince Zak.']],
   [q12,['If the station lantern goes out, we can light a spare lantern.','If the station lantern goes out, we have to light a spare lantern.']],
   [q13,['If the bridge is too narrow, Prince Zak has to slow down.','If the bridge is too narrow, Prince Zak should slow down.','If the bridge is too narrow, Prince Zak slows down.']],
-  [q14,['Hold the handrail if the train slows suddenly.','Please hold the handrail if the train slows suddenly.','You should hold the handrail if the train slows suddenly.']],
+  [q14,['Ask the driver to slow down if the train moves too quickly.','Please ask the driver to slow down if the train moves too quickly.','You should ask the driver to slow down if the train moves too quickly.']],
   [q15,['The passengers will be informed if the train is late.','The passengers must be informed if the train is late.','The passengers are informed if the train is late.']]
 ])for(const answer of valid)assert.equal(E.evaluate(q,answer).correct,true,`${q.id} rejected grammatical answer: ${answer}`);
 for(const [q,wrong,kind] of [
@@ -30,11 +30,11 @@ for(const [q,wrong,kind] of [
   [q11,'If the Wise Frog spots a crack in the track, he will warns Prince Zak.','language'],
   [q12,'If the station lantern goes out, we can lights a spare lantern.','language'],
   [q13,'If the bridge is too narrow, Prince Zak has to slows down.','language'],
-  [q14,'Hold the handrail, if the train slows suddenly.','punctuation'],
+  [q14,'Ask the driver to slow down, if the train moves too quickly.','punctuation'],
   [q15,'The passengers will informed if the train is late.','grammar']
 ])assert.equal(E.evaluate(q,wrong).kind,kind,`${q.id} error kind for ${wrong}`);
 assert.match(E.evaluate(q11,'If the Wise Frog spots a crack in the track he will warn Prince Zak.').message,/comma/i);
-assert.match(E.evaluate(q14,'Hold the handrail, if the train slows suddenly.').message,/Do not put a comma/i);
+assert.match(E.evaluate(q14,'Ask the driver to slow down, if the train moves too quickly.').message,/Do not put a comma/i);
 assert.match(E.evaluate(q15,'The passengers will informed if the train is late.').message,/helping verb/i);
 
 // The two valid pupil answers that exposed the old exact-answer problem.
