@@ -15,5 +15,6 @@ window.RailwayEngine = (() => {
   function submit(state,q,record,answer){if(record.completed)return null;const result=evaluate(q,answer),independent=record.attempts.length===0&&!record.hint&&!record.model;record.attempts.push({answer:tidy(answer),correct:result.correct,kind:result.kind,independent});let bonus=false;if(result.correct){record.completed=true;if(independent){state.streak++;if(state.streak===3){state.lives++;state.streak=0;bonus=true;}}else state.streak=0;}else{state.streak=0;state.lives=Math.max(0,state.lives-1);}return {...result,bonus};}
   function support(state,record,kind){if(!record.completed){record[kind]=true;state.streak=0;}}
   function stats(records){return {independent:records.filter(r=>r.attempts[0]?.correct&&r.attempts[0]?.independent).length,retries:records.filter(r=>r.attempts.length>1).length,hints:records.filter(r=>r.hint).length,models:records.filter(r=>r.model).length};}
-  return {tidy,words,wordString,distance,evaluate,createRecord,submit,support,stats};
+  function eggCount(records){return Math.min(5,Math.floor((records||[]).filter(r=>r.completed).length/3));}
+  return {tidy,words,wordString,distance,evaluate,createRecord,submit,support,stats,eggCount};
 })();

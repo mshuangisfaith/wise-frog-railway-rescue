@@ -47,4 +47,14 @@ assert.equal(JSON.stringify(record.attempts[0]),first);assert.equal(E.stats([rec
 state={lives:3,streak:0};for(let i=0;i<3;i++){const r=E.createRecord(Q[i]);E.submit(state,Q[i],r,Q[i].answers[0]);}
 assert.equal(state.lives,4);assert.equal(state.streak,0);
 record=E.createRecord(Q[1]);E.support(state,record,'hint');E.submit(state,Q[1],record,Q[1].answers[0]);assert.equal(record.attempts[0].independent,false);
+const journey=Q.map(E.createRecord),journeyState={lives:3,streak:0};
+for(let i=0;i<10;i++){
+  if(i===3||i===6){E.submit(journeyState,Q[i],journey[i],'Incorrect first answer.');}
+  if(i===8)E.support(journeyState,journey[i],'hint');
+  E.submit(journeyState,Q[i],journey[i],Q[i].answers[0]);
+  assert.equal(E.eggCount(journey),Math.floor((i+1)/3),`Egg count after ${i+1} completed questions`);
+}
+assert.equal(E.eggCount(journey),3,'Ten completed questions earn three eggs despite retries and hints');
+for(let i=10;i<15;i++){E.submit(journeyState,Q[i],journey[i],Q[i].answers[0]);}
+assert.equal(E.eggCount(journey),5);
 console.log('All sentence, meaning, punctuation, spelling and assessment checks passed.');

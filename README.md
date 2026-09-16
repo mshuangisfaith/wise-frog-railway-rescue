@@ -28,11 +28,11 @@ The checker separately flags:
 
 An opening if/when-clause requires a comma. A final if/when-clause does not. Q6 requires pupils to replace the repeated noun phrase “the rubber ball” with the pronoun “it”. Q11 is explicitly tested against reversed, ungrammatical and incorrectly punctuated answers.
 
-Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. Three consecutive independent correct answers reveal one secret egg and earn a bonus life. Five eggs is the maximum, and the finish screen tells pupils to show the teacher for ClassDojo points. Zero lives becomes continued practice.
+Hints ask pupils to identify the condition or the earlier event. A correct model is available after an incorrect attempt, but pupils must still type a correct answer to move on. First answers remain separate from retries, hints and model answers. One secret egg appears after 3, 6, 9, 12 and 15 correctly completed questions, even when pupils needed retries or hints. Three consecutive independent correct answers still earn a bonus life. The finish screen tells pupils to show the teacher their five eggs for ClassDojo points. Zero lives becomes continued practice. Existing saved journeys recalculate the egg count from completed questions when resumed, and the start screen gives the saved journey the main button.
 
 ## Sound and results
 
-The looping music is generated in the browser as a short 2D arcade-style chiptune. It starts when the pupil taps **Start the Engine + Sound**, which also satisfies iPad browser sound rules. Correct and wrong answers have distinct arcade cues. Pupils can turn sound off from the header. No old music file is loaded.
+The looping music is generated in the browser as a short 2D arcade-style chiptune. It starts when the pupil taps **Start the Engine + Sound**, which also satisfies iPad browser sound rules. Correct answers now trigger a short synthetic cheer; wrong answers have a distinct cue. Finding an egg adds a longer fanfare and crowd cheer. Pupils can turn sound off from the header. No old music file is loaded.
 
 At the finish, pupils can show the teacher the independent score and item review, download a CSV, or print the results. Results remain on the device and are not submitted automatically.
 
