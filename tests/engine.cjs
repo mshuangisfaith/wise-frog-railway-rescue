@@ -14,23 +14,34 @@ for(const q of Q.filter(q=>q.type==='combine')){
   assert.equal(result.kind,'meaning');
 }
 
-// Q11 and every completion item accept only approved, complete meanings.
-const q11=Q[10];
-for(const wrong of [
-  'If you complete your homework early, computer games may play you.',
-  'If computer games play you, you may complete your homework early.',
-  'If you complete your homework early you may play computer games.',
-  'if you complete your homework early, you may play computer games.',
-  'If you complete your homework early, you may play computer game.',
-  'If you complete your homework early, you may plays computer games.'
-])assert.equal(E.evaluate(q11,wrong).correct,false,`Q11 wrongly accepted: ${wrong}`);
+// New sentence-completion items have original story content and accept common valid forms.
+const [q11,q12,q13,q14,q15]=Q.slice(10);
+assert(!Q.slice(10).some(q=>/homework|computer games|weather|beach|miss the bus|taxi|sleepy|go to bed|misbehave|punished/i.test(`${q.stem} ${q.prompt}`)));
+for(const [q,valid] of [
+  [q11,['If the Wise Frog spots a crack in the track, he will warn Prince Zak.','If the Wise Frog spots a crack in the track, he has to warn Prince Zak.','If the Wise Frog spots a crack in the track, he warns Prince Zak.']],
+  [q12,['If the station lantern goes out, we can light a spare lantern.','If the station lantern goes out, we have to light a spare lantern.']],
+  [q13,['If the bridge is too narrow, Prince Zak has to slow down.','If the bridge is too narrow, Prince Zak should slow down.','If the bridge is too narrow, Prince Zak slows down.']],
+  [q14,['Hold the handrail if the train slows suddenly.','Please hold the handrail if the train slows suddenly.','You should hold the handrail if the train slows suddenly.']],
+  [q15,['The passengers will be informed if the train is late.','The passengers must be informed if the train is late.','The passengers are informed if the train is late.']]
+])for(const answer of valid)assert.equal(E.evaluate(q,answer).correct,true,`${q.id} rejected grammatical answer: ${answer}`);
+for(const [q,wrong,kind] of [
+  [q11,'If the Wise Frog spots a crack in the track he will warn Prince Zak.','punctuation'],
+  [q11,'if the Wise Frog spots a crack in the track, he will warn Prince Zak.','punctuation'],
+  [q11,'If the Wise Frog spots a crack in the track, he will warns Prince Zak.','language'],
+  [q12,'If the station lantern goes out, we can lights a spare lantern.','language'],
+  [q13,'If the bridge is too narrow, Prince Zak has to slows down.','language'],
+  [q14,'Hold the handrail, if the train slows suddenly.','punctuation'],
+  [q15,'The passengers will informed if the train is late.','grammar']
+])assert.equal(E.evaluate(q,wrong).kind,kind,`${q.id} error kind for ${wrong}`);
+assert.match(E.evaluate(q11,'If the Wise Frog spots a crack in the track he will warn Prince Zak.').message,/comma/i);
+assert.match(E.evaluate(q14,'Hold the handrail, if the train slows suddenly.').message,/Do not put a comma/i);
+assert.match(E.evaluate(q15,'The passengers will informed if the train is late.').message,/helping verb/i);
 
-assert.equal(E.evaluate(q11,'If you complete your homework early you may play computer games.').kind,'punctuation');
-assert.match(E.evaluate(q11,'If you complete your homework early you may play computer games.').message,/comma/i);
-assert.match(E.evaluate(q11,'if you complete your homework early, you may play computer games.').message,/capital/i);
-assert.match(E.evaluate(q11,'If you complete your homework early, you may paly computer games.').message,/spelling/i);
-assert.match(E.evaluate(Q[13],'You should go to bed, if you feel sleepy.').message,/Do not put a comma/i);
-assert.match(E.evaluate(Q[14],'You will punished if you continue to misbehave.').message,/“be”/i);
+// The two valid pupil answers that exposed the old exact-answer problem.
+const earlierQ13={type:'complete',stem:'If I miss the bus,',grammar:{position:'opening',actor:'I',action:'take a taxi',present:'take a taxi'},answers:['If I miss the bus, I will take a taxi.'],explanation:'A taxi is one possible result.'};
+const earlierQ14={type:'complete',stem:'____________________ if you feel sleepy.',grammar:{position:'final',condition:'if you feel sleepy',imperative:true,action:'go to bed'},answers:['Go to bed if you feel sleepy.'],explanation:'This is a valid command.'};
+assert.equal(E.evaluate(earlierQ13,'If I miss the bus, I have to take a taxi.').correct,true);
+assert.equal(E.evaluate(earlierQ14,'Go to bed if you feel sleepy.').correct,true);
 
 // Q6 must combine the ideas with when and replace the repeated noun with “it”.
 const q6=Q[5];
